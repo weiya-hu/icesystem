@@ -1,0 +1,81 @@
+*{
+    margin: 0;
+    padding: 0;
+		user-select:none;
+    /*text-align: left;*/
+    /*background: rgba(0,0,0,0.01);*/
+  }
+html, body {height:100%; overflow:hidden;font-size: 0.1rem}
+a{
+    color:333333;
+}
+img{
+  width: 100%;
+  vertical-align: center;
+}
+.flex{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.flexa{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.fleximg{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flexl{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.flexll{
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.flexr{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.flexclb{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: space-between;
+}
+.flexclc{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: center;
+}
+.flexcla{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: space-around;
+}
+.flexcll{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.flexwb{
+  display: flex;
+  justify-content: space-between;
+  align-content: space-between;
+  flex-wrap:wrap;
+}
+.flexcls{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: stretch;
+}

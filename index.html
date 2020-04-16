@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=0avlWKEcITqvTnjSGee84n9tOFusp0mH"></script>
+    <title>icecondstsystem</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+	<script type="text/javascript">
+		fnResize();
+		window.onresize = function () {
+  			fnResize();
+		}
+		function fnResize() {
+ 		 	var deviceWidth = document.documentElement.clientWidth || window.innerWidth;
+ 			 if (deviceWidth >= 1920) {
+    				deviceWidth = 1920;
+  			}
+  			if (deviceWidth <= 320) {
+    				deviceWidth = 320;
+ 			 }
+  		document.documentElement.style.fontSize = (deviceWidth / 19.20) + 'px';
+		}
+	</script>
+</html>
