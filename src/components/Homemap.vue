@@ -85,8 +85,8 @@
 
 <script>
 	import BMap from 'BMap';
-	import icono from '../assets/locag5.png';
-	import iconr from '../assets/locag.png';
+	import icono from '../assets/locag.png';
+	import iconr from '../assets/locag7.png';
 	export default {
 		name: 'Homemap',
 		data() {
@@ -142,7 +142,7 @@
 				window[mker].setAnimation(BMAP_ANIMATION_BOUNCE)
 				
 				let points=new BMap.Point(list[index].data[indx].latitude,list[index].data[indx].longitude)
-				this.maps.centerAndZoom(points, 12); // 初始化地图,设置中心点坐标和地图级别
+				this.maps.centerAndZoom(points, 16); // 初始化地图,设置中心点坐标和地图级别
 				
 				let infoWindows=this.infowindow(list,index,indx)
 				this.maps.openInfoWindow(infoWindows,points);
@@ -180,9 +180,9 @@
 				let that=this
 				//判断是否是’我的‘设备，要用不同颜色的marker
 				if(person=='我的'){
-					var myicon = new BMap.Icon(iconr, new BMap.Size(35, 35));
+					var myicon = new BMap.Icon(iconr, new BMap.Size(50, 50));
 				}else{
-					var myicon = new BMap.Icon(icono, new BMap.Size(35, 35));
+					var myicon = new BMap.Icon(icono, new BMap.Size(50, 50));
 				}
 				//给每个marker单独取个不同的名字，好单独控制
 				let namemarker = "marker"+m+n;
@@ -205,7 +205,7 @@
 				let point = new BMap.Point(list[m].data[n].latitude,list[m].data[n].longitude)
 				let opts = {
           width:100,
-          height: 70,
+          height: 80,
           title:'设备所属：'+list[m].person
         };
         let x="<div>设备名："+list[m].data[n].name+ "</div><input id='btn' type='button' style='color: #0397D7; position: relative;top: 0.1rem;left: 50%;transform: translateX(-50%);' @click='torealtime' value='查看详情'/>"
@@ -234,14 +234,17 @@
 					if (list[i].person) {
 						//给列表添加上是否下拉的键值对，刚开始是全部拉开的
 						list[i].pull = true
+						
 						for (let j = 0; j < list[i].data.length; j++) {
-							if (i == 0 && j == 0) {
-								console.log(list[i].data[j])
-								//给列表添加上是否被选中的键值对，刚开始是默认第一个选中
-								list[i].data[j].active = true
-							} else {
-								list[i].data[j].active = false
-							}
+							list[i].data[j].active = false
+							list[that.idx].data[that.indx].active = true
+//							if (i == 0 && j == 0) {
+//								console.log(list[i].data[j])
+//								//给列表添加上是否被选中的键值对，刚开始是默认第一个选中
+//								list[i].data[j].active = true
+//							} else {
+//								list[i].data[j].active = false
+//							}
 						}
 					}
 				}
@@ -392,7 +395,7 @@
 
 	/* list样式 */
 	.listcon {
-		height: calc(100% - 0.8rem);
+		height: calc(100% - 1rem);
 		padding-left: 0.2rem;
 	}
 
