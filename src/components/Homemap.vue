@@ -34,21 +34,21 @@
 					<div class="fleximg imgset"><img src="../assets/set.png" alt="设备总数"></div>
 					<div class="settxt">
 						<div class="setxtx">设备总数</div>
-						<div class="setxtx">(10)</div>
+						<div class="setxtx">({{state.total}})</div>
 					</div>
 				</div>
 				<div class="fleximg setitem onlineitem">
 					<div class="fleximg imgset"><img src="../assets/gou.png" alt="设备总数"></div>
 					<div class="settxt">
 						<div class="setxtx">在线设备</div>
-						<div class="setxtx">(7)</div>
+						<div class="setxtx">({{state.onLine}})</div>
 					</div>
 				</div>
 				<div class="fleximg setitem offlineitem">
 					<div class="fleximg imgset"><img src="../assets/gt.png" alt="设备总数"></div>
 					<div class="settxt">
 						<div class="setxtx">离线设备</div>
-						<div class="setxtx">(3)</div>
+						<div class="setxtx">({{state.offLine}})</div>
 					</div>
 				</div>
 			</div>
@@ -57,23 +57,23 @@
 				<div class="mechinedata flexa">
 					<div class="dataitem">
 						<div class="dataname">设备名称</div>
-						<div class="datatxt">设备一号</div>
+						<div class="datatxt">{{mechinelist[idx].data[indx].name}}</div>
 					</div>
 					<div class="dataitem">
 						<div class="dataname">凝冰厚度</div>
-						<div class="datatxt">3.2mm</div>
+						<div class="datatxt">{{icedata.ice}}</div>
 					</div>
 					<div class="dataitem">
 						<div class="dataname">温度</div>
-						<div class="datatxt">2℃</div>
+						<div class="datatxt">{{icedata.tem}}</div>
 					</div>
 					<div class="dataitem">
 						<div class="dataname">湿度</div>
-						<div class="datatxt">70RH(%)</div>
+						<div class="datatxt">{{icedata.hum}}</div>
 					</div>
 					<div class="dataitem">
 						<div class="dataname">测量时间</div>
-						<div class="datatxt datatime">2020-03-01 01:10:12</div>
+						<div class="datatxt datatime">{{icedata.time}}</div>
 					</div>
 				</div>
 				<div id="allmap" ref="allmap"></div>
@@ -94,7 +94,9 @@
 				mechinelist: [],//设备列表
 				maps:{},//地图实例全局可用
 				idx:0,//选中的设备第1层下标
-				indx:0//选中的设备第2层下标
+				indx:0,//选中的设备第2层下标
+				state:{},//总的设备状态
+				icedata:{},//当前所选设备的最新凝冰数据
 			}
 		},
 		methods: {
@@ -138,11 +140,13 @@
 				list[this.idx].data[this.indx].active = false
 				list[index].data[indx].active = true
 				
+				this.geticedata(list[index].data[indx].id)
+				
 				let mker='marker'+index+indx
 				window[mker].setAnimation(BMAP_ANIMATION_BOUNCE)
 				
 				let points=new BMap.Point(list[index].data[indx].latitude,list[index].data[indx].longitude)
-				this.maps.centerAndZoom(points, 16); // 初始化地图,设置中心点坐标和地图级别
+				this.maps.centerAndZoom(points, 12); // 初始化地图,设置中心点坐标和地图级别
 				
 				let infoWindows=this.infowindow(list,index,indx)
 				this.maps.openInfoWindow(infoWindows,points);
@@ -160,6 +164,8 @@
 				list[this.idx].data[this.indx].active = false
 				list[index].data[indx].active = true
 				
+				this.geticedata(list[index].data[indx].id)
+				
 				let mker='marker'+index+indx
 				window[mker].setAnimation(BMAP_ANIMATION_BOUNCE)
 				
@@ -171,15 +177,35 @@
 				this.idx=index;
 				this.indx=indx;
 			},
+			//获取单个设备的最新数据
+			geticedata(id){
+				let data={equipmentId:id},that=this;
+				const loading = this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        });
+				this.$http.post(this.global.domainurl + '/icecondensation/equipment/getEquipmentValueById',data).then(function(res) {
+					 loading.close();
+					console.log(res)
+					if(res.data.success){
+						that.icedata=res.data.result
+					}
+				}).catch(function(error) {
+					 loading.close();
+					console.log(error)
+				})
+			},
 			torealtime(){
 				console.log(777)
 				console.log(this.indx)
 			},
 			//根据是否是自己的和别人分享的设备创建标注点,给标注点添加label，添加点击事件，点击显示信息窗口
-			addmarker(points,person,name,m,n){
+			addmarker(points,state,name,m,n){
 				let that=this
 				//判断是否是’我的‘设备，要用不同颜色的marker
-				if(person=='我的'){
+				if(state==0){
 					var myicon = new BMap.Icon(iconr, new BMap.Size(50, 50));
 				}else{
 					var myicon = new BMap.Icon(icono, new BMap.Size(50, 50));
@@ -189,7 +215,7 @@
 				window[namemarker]=new BMap.Marker(points)
 				//给每个marker创建设备名的label
 				var label = new BMap.Label(name,{
-                offset:new BMap.Size(25,5)
+                offset:new BMap.Size(30,30)
             })
 				//给每个marker添加点击事件
 				window[namemarker].addEventListener("click",function (event) {
@@ -221,57 +247,55 @@
         return infoWindows
 			}
 		},
-		mounted() {
-			
+		beforeCreate() {
+			console.log('maps')
 		},
-		beforeCreate: function() {
+		mounted: function() {
 			let that = this;
+			console.log(localStorage.token)
 			//一来就请求到设备列表
-			this.$http.get(this.global.domainurl + 'icecondensation/user/getList').then(function(res) {
-				let list = JSON.parse(JSON.stringify(res.data.result))
-				//给列表加上是否下拉状态，和每个设备加上是否选中状态
-				for (let i = 0; i < list.length; i++) {
-					if (list[i].person) {
-						//给列表添加上是否下拉的键值对，刚开始是全部拉开的
-						list[i].pull = true
-						
-						for (let j = 0; j < list[i].data.length; j++) {
-							list[i].data[j].active = false
-							list[that.idx].data[that.indx].active = true
-//							if (i == 0 && j == 0) {
-//								console.log(list[i].data[j])
-//								//给列表添加上是否被选中的键值对，刚开始是默认第一个选中
-//								list[i].data[j].active = true
-//							} else {
-//								list[i].data[j].active = false
-//							}
-						}
-					}
-				}
-				that.mechinelist = list
-				//等组件创建完后开始做地图的事
-				that.$nextTick(function(){
-					that.maps= new BMap.Map(this.$refs.allmap);
-					let list =JSON.parse(JSON.stringify(this.mechinelist))
-					//等组件创建完后先创建地图
-					let points={x:list[0].data[0].latitude,y:list[0].data[0].longitude}
-					that.getmap(points)
-					             
-					//添加各个标注
-					for(let m=0;m<list.length;m++){
-						if(list[m].person){
-							for(let n=0;n<list[m].data.length;n++){
-								//获取要操作的经纬度
-								let point = new BMap.Point(list[m].data[n].latitude,list[m].data[n].longitude)
-								that.addmarker(point,list[m].person,list[m].data[n].name,m,n)
+			this.$nextTick(function(){
+				that.$http.get(that.global.domainurl + '/icecondensation/equipment/getEquipmentListByUsername').then(function(res) {
+					let list = JSON.parse(JSON.stringify(res.data.result.list))
+					//给列表加上是否下拉状态，和每个设备加上是否选中状态
+					for (let i = 0; i < list.length; i++) {
+						if (list[i].person) {
+							//给列表添加上是否下拉的键值对，刚开始是全部拉开的
+							list[i].pull = true
+							
+							for (let j = 0; j < list[i].data.length; j++) {
+								list[i].data[j].active = false
+								list[that.idx].data[that.indx].active = true
 							}
 						}
 					}
-					//地图创建好后。默认的第一个选中的设备在地图上的标注动画和信息窗口的显示
-					that.isactive(0,0)
-		   })
-			}).catch(function(error) {
-				console.log(error)
+					that.mechinelist = list
+					that.state=res.data.result.state
+					//等组件创建完后开始做地图的事
+					that.$nextTick(function(){
+						that.maps= new BMap.Map(this.$refs.allmap);
+						let list =JSON.parse(JSON.stringify(this.mechinelist))
+						//等组件创建完后先创建地图
+						let points={x:list[0].data[0].latitude,y:list[0].data[0].longitude}
+						that.getmap(points)
+						             
+						//添加各个标注
+						for(let m=0;m<list.length;m++){
+							if(list[m].person){
+								for(let n=0;n<list[m].data.length;n++){
+									//获取要操作的经纬度
+									let point = new BMap.Point(list[m].data[n].latitude,list[m].data[n].longitude)
+									that.addmarker(point,list[m].data[n].state,list[m].data[n].name,m,n)
+								}
+							}
+						}
+						//地图创建好后。默认的第一个选中的设备在地图上的标注动画和信息窗口的显示
+						that.isactive(0,0)
+						that.geticedata(list[0].data[0].id)
+			   })
+				}).catch(function(error) {
+					console.log(error)
+				})
 			})
 		},
 		beforeMount: function() {

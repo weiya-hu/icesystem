@@ -51,6 +51,9 @@
 					<div class="datatxt datatime">2020-03-01 01:10:12</div>
 				</div>
 			</div>
+			<div class="icechartitem">
+				<div id='icechart' style="height: 80%;width: 80%;"></div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -81,9 +84,52 @@
 				this.idx=index;
 				this.indx=indx;
 			},
+			drawLine(){
+      	console.log(this.tdNum)
+        // 基于准备好的dom，初始化echarts实例
+        let myChart = this.$echarts.init(document.getElementById('icechart'))
+        // 绘制图表
+        myChart.setOption({
+        	tooltip: {
+						trigger: 'axis',
+						axisPointer: {
+							type: 'cross',
+							crossStyle: {
+								color: '#999'
+							}
+						}
+					},
+					xAxis: {
+						type: 'category',
+						axisTick: {length:5},
+						axisLabel : {//坐标轴刻度标签的相关设置。
+	            rotate:"45"
+	          },
+	          data: [1,2,3,4,5,6,7,8,9,10,11,12]
+		      },
+	        yAxis: {
+	      	  scale: true
+	        },
+	        series: [
+	        {
+	          name: '凝冰厚度',
+	          type: 'line',
+	          data: [2,54,6,7,9,34,5,8,78,6,8,9]
+	        },
+	        {
+	          name: '温度',
+	          type: 'line',
+	          data: [4,7,99,67,-3,6,7,9,55,42,66,35]
+	        }]
+        });
+	    	window.onresize = myChart.resize;
+	    	myChart.on('click',function(params){
+				    console.log(params);
+				});
+			}
 		},
 		mounted() {
-			
+			this.drawLine()
 		},
 		beforeCreate: function() {
 			let that = this;
@@ -149,5 +195,6 @@
 	.dataname {font-size: 0.2rem;}
 	.datatxt {font-size: 0.3rem;}
 	.mechinedata {height: 1.1rem;margin: 0 0 0.1rem 0;border-bottom: 1px solid #eee;box-sizing: border-box;}
-	.datatime {ont-size: 0.22rem}
+	.datatime {font-size: 0.22rem}
+	.icechartitem{width: 100%;height: calc(100% - 2.2rem);}
 </style>

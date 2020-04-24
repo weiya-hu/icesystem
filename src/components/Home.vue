@@ -28,7 +28,20 @@
 			</div>
 		</div>
 		<div class="right">
-			<div class="righttop">凝冰监测平台</div>
+			<div class="righttop fleximg">
+				<div class="title">凝冰监测平台</div>
+				<div class="userdata fleximg">
+					<div class="fleximg ">
+						<div class="imgtx fleximg">
+							<img src="../assets/tx.png"/>
+						</div>
+						<div class="realname">{{userinfo.realname}}</div>
+					</div>
+					<div class="exit" @click="exit">
+						退出登录
+					</div>
+				</div>
+			</div>
 			<Homemap v-if="activepage==0" style='height: calc(100%-1rem);'></Homemap>
 			<Realtime v-if="activepage==1"></Realtime>
 			<History v-if="activepage==2"></History>
@@ -48,18 +61,27 @@
 	  data () {
 	    return {
 	      height:'',
-				activepage:0
+				activepage:0,
+				userinfo:JSON.parse(localStorage.userinfo)
 	    }
 	  },
 		methods:{
 			exchangepage(id){
 				this.activepage=id
+			},
+			exit(){
+				this.$router.push({
+					path:'/login'
+				})
+				localStorage.removeItem('token')
+				localStorage.removeItem('userinfo')
+				localStorage.removeItem('islogin')
 			}
+		},
+		mounted(){
 		},
 	  beforeCreate:function(){
 	  	//在页面还没有创建前获取是否登录，如果没有就跳转login登录页面
-	  	
-			// let islogin=false
 			let islogin=localStorage.getItem('islogin')
 	  	if(!islogin){
 	  		this.$router.push({
@@ -97,6 +119,12 @@
 	.imghome{width: 0.2rem;margin-right: 0.14rem;}
 	.hometxt{color: #FFFFFF;font-size: 0.18rem;}
 	.right{width: 100%;height: 100%;}
-	.righttop{height: 1rem;font-size: 0.5rem;font-weight: bold;letter-spacing: 0.1rem; text-align: center;line-height: 1rem;border-bottom: 1px solid #CCCCCC;}
+	.righttop{height: 1rem;border-bottom: 1px solid #CCCCCC;position: relative;}
+	.title{font-size: 0.5rem;font-weight: bold;letter-spacing: 0.1rem; text-align: center;line-height: 1rem;}
 	.left .activepage{background: rgba(21, 136, 199,1);}
+	.userdata{position: absolute;top: 50%;right: 0.5rem;transform: translateY(-50%);}
+	.imgtx{width: 0.4rem;margin-right: 0.05rem;}
+	.realname{font-size: 0.25rem;font-weight: 600;}
+	.exit{color: #FFFFFF;background: #0297D7;font-size: 0.22rem;border-radius: 0.04rem;height: 0.5rem;line-height: 0.5rem;
+		padding: 0 0.15rem;margin-left: 0.3rem;}
 </style>
