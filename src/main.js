@@ -12,31 +12,34 @@ Vue.use(VueRouter)
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
-import global_ from './public/global'//引用文件
+import global_ from './public/global' //引用文件
 Vue.prototype.global = global_
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts;
 import './../static/base.css'
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
+	el: '#app',
+	router,
+	components: {
+		App
+	},
+	template: '<App/>'
 })
 axios.interceptors.request.use(
 	config => {
-	    if (localStorage.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
-	      config.headers={
-	      	"Content-Type": "application/json",
-	        "X-Access-Token": localStorage.token
-	      }
-	    }
-	    return config;
+
+		if(localStorage.token) { // 判断是否存在token，如果存在的话，则每个http header都加上token
+			config.headers = {
+				"Content-Type": "application/json",
+				"X-Access-Token": localStorage.token
+			}
+		}
+		return config;
 	},
 	err => {
-    return Promise.reject(err);
-});
+		return Promise.reject(err);
+	});
 //Vue.http.interceptors.push((request,next)=>{
 // //request.credentials = true; // 接口每次请求会跨域携带cookie
 // request.method= 'POST'; // 请求方式（get,post）
@@ -80,29 +83,44 @@ axios.interceptors.request.use(
 //router.push('/login')
 //return Promise.reject(error)
 //})
-//// 添加响应拦截器
-//axios.interceptors.response.use(function (response) {
-//// 对响应数据做点什么
-//return response
-//}, function (error) {
-//// 对响应错误做点什么
-//if (error.response) {
-//  switch (error.response.status) {
-//    case 401:
-//      store.commit('del_token')
-//      router.push('/login')
-//  }
-//}
-//return Promise.reject(error)
-//})
-//
+// 添加响应拦截器
+axios.interceptors.response.use(function(response) {
+	// 对响应数据做点什么
+	return response
+}, function(error) {
+	console.log(error)
+	// 对响应错误做点什么
+	if(error.response) {
+		//	    switch (error.response.status) {
+		//	      case 401:
+		//	        store.commit('del_token')
+		//	        router.push('/login')
+		//	    }
+		if(error.response.status === 500) {
+			ElementUI.MessageBox('token失效，请重新登录', {
+          confirmButtonText: '确定'
+        }).then(()=>{
+        	console.log('0000')
+          router.push('/login')
+					localStorage.removeItem('token')
+					localStorage.removeItem('userinfo')
+					localStorage.removeItem('islogin')
+        });
+			
+		}
+	}
+	return Promise.reject(error)
+})
+console.log(ElementUI)
 //router.beforeEach((to, from, next) => {
-//if (to.meta.title) {
-//  document.title = to.meta.title
-//}
-//if (to.path !== '/login' && !localStorage.getItem('userInfo')) {
-//  next({path: '/login'})
-//} else {
-//  next()
-//}
+//	if(to.meta.title) {
+//		document.title = to.meta.title
+//	}
+//	if(to.path !== '/login' && !localStorage.getItem('userInfo')) {
+//		next({
+//			path: '/login'
+//		})
+//	} else {
+//		next()
+//	}
 //})

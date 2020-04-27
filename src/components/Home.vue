@@ -44,7 +44,7 @@
 			</div>
 			<Homemap v-if="activepage==0" style='height: calc(100%-1rem);'></Homemap>
 			<Realtime v-if="activepage==1"></Realtime>
-			<History v-if="activepage==2"></History>
+			<History v-show="activepage==2"></History>
 			<Equipment v-if="activepage==3"></Equipment>
 		</div>
 	</div>

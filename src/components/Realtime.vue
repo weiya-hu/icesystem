@@ -134,8 +134,8 @@
 		beforeCreate: function() {
 			let that = this;
 			//一来就请求到设备列表
-			this.$http.get(this.global.domainurl + 'icecondensation/user/getList').then(function(res) {
-				let list = JSON.parse(JSON.stringify(res.data.result))
+			this.$http.get(that.global.domainurl + '/icecondensation/equipment/getEquipmentListByUsername').then(function(res) {
+				let list = JSON.parse(JSON.stringify(res.data.result.list))
 				//给列表加上是否下拉状态，和每个设备加上是否选中状态
 				for(let i = 0; i < list.length; i++) {
 					if(list[i].person) {
