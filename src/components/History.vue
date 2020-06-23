@@ -48,7 +48,7 @@
 			<div class="img fleximg" @click.stop="stopmp">
 				<img :src="showimgurl"/>
 			</div>
-			<div class="imgcha fleximg" @click="isshowimg">
+			<div class="imgcha fleximg">
 				<img src="../assets/cha.png"/>
 			</div>
 		</div>
@@ -60,7 +60,7 @@
 		name: 'Homemap',
 		data() {
 			return {
-				state: '',
+				state: '',//设备编号
 				equipnamelist:[],//element组件设备名称模糊查询下拉列表
 				timevalue: [],//时间选择结果
 				equiplist:[],//查询到的历史数据
@@ -148,6 +148,7 @@
       },
       isshowimg(){
       	this.isshowimgflag=!this.isshowimgflag
+      	console.log(this.isshowimgflag)
       },
       stopmp(){},
 		},

@@ -46,6 +46,7 @@
 			<Realtime v-if="activepage==1"></Realtime>
 			<History v-show="activepage==2"></History>
 			<Equipment v-if="activepage==3"></Equipment>
+			<Person v-if="activepage==4"></Person>
 		</div>
 	</div>
 </template>
@@ -55,9 +56,10 @@
 	import Homemap from './Homemap.vue';
 	import Realtime from './Realtime.vue';
 	import Equipment from './Equipment.vue';
+	import Person from './Person.vue';
 	export default {
 	  name: 'Home',
-		components:{History,Homemap,Realtime,Equipment},
+		components:{History,Homemap,Realtime,Equipment,Person},
 	  data () {
 	    return {
 	      height:'',
@@ -79,15 +81,20 @@
 			}
 		},
 		mounted(){
+//			this.$nextTick(function(){
+//				let islogin=localStorage.getItem('islogin')
+//				console.log(islogin)
+//			  	if(!islogin){
+//			  		this.$router.push({
+//			  			path:'/login'
+//			  		})
+//			  	}
+//		   })
+			
 		},
 	  beforeCreate:function(){
 	  	//在页面还没有创建前获取是否登录，如果没有就跳转login登录页面
-			let islogin=localStorage.getItem('islogin')
-	  	if(!islogin){
-	  		this.$router.push({
-	  			path:'/login'
-	  		})
-	  	}
+			
 	  },
 		beforeMount(){
 			this.height=(document.documentElement.clientHeight).toFixed(2)+'px';

@@ -26,6 +26,7 @@ new Vue({
 	},
 	template: '<App/>'
 })
+//拦截器设置全局请求token
 axios.interceptors.request.use(
 	config => {
 
@@ -40,49 +41,6 @@ axios.interceptors.request.use(
 	err => {
 		return Promise.reject(err);
 	});
-//Vue.http.interceptors.push((request,next)=>{
-// //request.credentials = true; // 接口每次请求会跨域携带cookie
-// request.method= 'POST'; // 请求方式（get,post）
-// request.headers.set('token',localStorage.token) // 请求headers携带参数
-// 
-// next(function(response){
-//return response;
-// 
-// });
-//})
-//Vue.http.interceptors.push((request, next) => {
-//		let token =localStorage.getItem('token')
-//  request.headers.set('token', token); //setting request.headers
-//  next((response) => {
-//    return response
-// })
-//})
-//if (localStorage.getItem('token')) {
-//store.commit('set_token', localStorage.getItem('token'))
-//}
-//const myfilter = {
-//bzdate: (date) => {
-//  if (date) {
-//    let timestring = new Date(date)
-//    return timestring.toLocaleDateString() + ' ' + timestring.toTimeString().substr(0, 8)
-//  }
-//}
-//}
-//for (let key in myfilter) {
-//Vue.filter(key, myfilter[key])
-//}
-//// 添加请求拦截器
-//axios.interceptors.request.use(function (config) {
-//// 在发送请求之前做些什么
-//// 判断是否存在token,如果存在将每个页面header添加token
-//if (store.state.token) {
-//  config.headers.common['token'] = store.state.token
-//}
-//return config
-//}, function (error) {
-//router.push('/login')
-//return Promise.reject(error)
-//})
 // 添加响应拦截器
 axios.interceptors.response.use(function(response) {
 	// 对响应数据做点什么
@@ -91,11 +49,6 @@ axios.interceptors.response.use(function(response) {
 	console.log(error)
 	// 对响应错误做点什么
 	if(error.response) {
-		//	    switch (error.response.status) {
-		//	      case 401:
-		//	        store.commit('del_token')
-		//	        router.push('/login')
-		//	    }
 		if(error.response.status === 500) {
 			ElementUI.MessageBox('token失效，请重新登录', {
           confirmButtonText: '确定'
@@ -111,16 +64,36 @@ axios.interceptors.response.use(function(response) {
 	}
 	return Promise.reject(error)
 })
-console.log(ElementUI)
-//router.beforeEach((to, from, next) => {
-//	if(to.meta.title) {
-//		document.title = to.meta.title
-//	}
-//	if(to.path !== '/login' && !localStorage.getItem('userInfo')) {
-//		next({
-//			path: '/login'
-//		})
-//	} else {
-//		next()
-//	}
-//})
+//在main.js设置全局的请求次数，请求的间隙
+axios.defaults.retry = 4;
+axios.defaults.retryDelay = 1000;
+
+axios.interceptors.response.use(undefined, function axiosRetryInterceptor(err) {
+    var config = err.config;
+    // If config does not exist or the retry option is not set, reject
+    if(!config || !config.retry) return Promise.reject(err);
+    
+    // Set the variable for keeping track of the retry count
+    config.__retryCount = config.__retryCount || 0;
+    
+    // Check if we've maxed out the total number of retries
+    if(config.__retryCount >= config.retry) {
+        // Reject with the error
+        return Promise.reject(err);
+    }
+    
+    // Increase the retry count
+    config.__retryCount += 1;
+    
+    // Create new promise to handle exponential backoff
+    var backoff = new Promise(function(resolve) {
+        setTimeout(function() {
+            resolve();
+        }, config.retryDelay || 1);
+    });
+    
+    // Return the promise in which recalls axios to retry the request
+    return backoff.then(function() {
+        return axios(config);
+    });
+});

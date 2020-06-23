@@ -76,6 +76,7 @@
 			  return `color: ${data.color}; padding: ${data.padding}; transform: ${data.transform}`
 			},
 			loginsubmit(){
+				event.preventDefault();
 				console.log(this.loginform)
 				let data={
 					username:this.loginform.username,
@@ -156,10 +157,10 @@
 		text-justify:distribute-all-lines;}
 	.mh{color: #FFFFFF;font-size:14px;margin-right: 20px;}
 	.iptusername{width: calc(100% - 165px);height: 35px;color: #fff;line-height: 35px;padding-left: 10px;background: rgba(255,255,255,0.3);
-		border: 1px solid #D7AC81;box-sizing: border-box;font-size: 16px}
+		border: 1px solid #D7AC81;box-sizing: border-box;font-size: 16px;outline: none;color: #555555;}
 	.itemyzm{width: calc(100% - 165px);height: 37px;}
 	.iptyzm{height: 35px;color: #fff;line-height: 35px;padding-left: 10px; background: rgba(255,255,255,0.1);border: 1px solid #D7AC81;flex: 3;
-		margin-right: 10px;font-size: 16px;width: 70%;overflow: hidden;}
+		margin-right: 10px;font-size: 16px;width: 70%;overflow: hidden;outline: none;}
 	.login .yzmtxt{font-size: 14px;background: rgba(255,255,255,0.7);height: 100%;flex: 2.5;overflow: hidden;}
 	.iptsubmit{width: 85%;display: block;margin: 0 auto;height:38px;line-height: 38px;border:1px solid #D7AC81;background: rgba(215, 172, 129,0.8);
 		color: #FFFFFF;outline: none;font-size: 16px}

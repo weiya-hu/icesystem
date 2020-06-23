@@ -256,6 +256,7 @@
 			//一来就请求到设备列表
 			this.$nextTick(function(){
 				that.$http.get(that.global.domainurl + '/icecondensation/equipment/getEquipmentListByUsername').then(function(res) {
+					if(res.data){console.log('res.data')}
 					let list = JSON.parse(JSON.stringify(res.data.result.list))
 					//给列表加上是否下拉状态，和每个设备加上是否选中状态
 					for (let i = 0; i < list.length; i++) {
