@@ -199,7 +199,9 @@
 			},
 			torealtime(){
 				console.log(777)
-				console.log(this.indx)
+				console.log(this.indx,this.idx)
+				let data=[this.idx,this.indx]
+				this.$emit('torealtime', data);
 			},
 			//根据是否是自己的和别人分享的设备创建标注点,给标注点添加label，添加点击事件，点击显示信息窗口
 			addmarker(points,state,name,m,n){

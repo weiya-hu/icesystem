@@ -259,7 +259,7 @@
 					if(res.data.success){
 						list=JSON.parse(JSON.stringify(res.data.result)) 
 						for(let i=0;i<list.length;i++){
-							list[i].value=list[i].realname
+							list[i].value=list[i].realname+'('+list[i].phone+')'
 						}
 						cb(list);
 					}

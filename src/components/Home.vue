@@ -42,8 +42,8 @@
 					</div>
 				</div>
 			</div>
-			<Homemap v-if="activepage==0" style='height: calc(100%-1rem);'></Homemap>
-			<Realtime v-if="activepage==1"></Realtime>
+			<Homemap v-if="activepage==0" style='height: calc(100%-1rem);' @torealtime='torealtm'></Homemap>
+			<Realtime v-if="activepage==1" :inx='torealdata'></Realtime>
 			<History v-show="activepage==2"></History>
 			<Equipment v-if="activepage==3"></Equipment>
 			<Person v-if="activepage==4"></Person>
@@ -64,7 +64,8 @@
 	    return {
 	      height:'',
 				activepage:0,
-				userinfo:JSON.parse(localStorage.userinfo)
+				userinfo:JSON.parse(localStorage.userinfo),
+				torealdata:[]
 	    }
 	  },
 		methods:{
@@ -78,6 +79,12 @@
 				localStorage.removeItem('token')
 				localStorage.removeItem('userinfo')
 				localStorage.removeItem('islogin')
+			},
+			torealtm(data){
+				console.log(data)
+				this.torealdata=data
+				console.log(this.torealdata)
+				this.activepage=1
 			}
 		},
 		mounted(){
